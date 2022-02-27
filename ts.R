@@ -38,6 +38,7 @@ logr
 dev.off() #to face margin problem error
 plot(test_ts)
 plot(stl(test_ts,s.window = "periodic"))
+
 # both acf() and pacf() generates plots by default
 acf = acf(test_ts, main='ACF Plot', lag.max=100) # autocorrelation
 pacf.logr = pacf(test_ts, main='PACF Plot', lag.max=100) # partial autocorrelation
@@ -55,7 +56,7 @@ accuracy(forecast(m1))
 checkresiduals(m1) # p-value over .05 confirms no autocorrelations
 
 
-#Analysis for Yahoo finance data
+#### Analysis for Yahoo finance data
 #Import important library
 library(quantmod)
 library(fpp)
@@ -72,20 +73,31 @@ dev.off() #to face margin problem error
 plot(data[,6], main = "Adhusted Closing Price")
 log <- periodReturn(adj,period = "daily", type = "log", leading = TRUE)
 log <- 1+log
-head(logr)
+head(log)
 
 #differentiate
-diff(log) 
-par(mfrow = c(2,1))
+logr <- diff(log) 
+
+narf <- function (x) {
+  x[is.infinite(x)] <- 1
+  return(x)
+}
+
+adj$logr <- narm(narf(adj$logr))
+test_ts <- ts(adj$logr, end=c(year(max_Date), month(max_Date)),start=c(year(min_Date), month(min_Date)),frequency=12)#freq 12 => Monthly data
+
+logr <- adj
+head(logr)
+
 # both acf() and pacf() generates plots by default
-acf.logr = acf(logr, main='ACF Plot', lag.max=100)# autocorrelation
-pacf.logr = pacf(logr, main='PACF Plot', lag.max=100)# partial autocorrelation
+acf = acf(test_ts, main='ACF Plot', lag.max=100) # autocorrelation
+pacf.logr = pacf(test_ts, main='PACF Plot', lag.max=100) # partial autocorrelation
 
 #Augmented Dickey-Fuller(ADF) Test
-print(adf.test(logr)) # p-value < 0.05 indicates the TS is stationary
+print(adf.test(test_ts)) # p-value < 0.05 indicates the TS is stationary
 
 #Estimate the coefficients Using Seasonal Arima model
-m1 <- auto.arima(logr, seasonal = FALSE)
+m1 <- auto.arima(logr, seasonal = TRUE)
 summary(m1)
 
 #studying the residues
