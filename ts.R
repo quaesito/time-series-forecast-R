@@ -97,7 +97,7 @@ pacf.logr = pacf(test_ts, main='PACF Plot', lag.max=100) # partial autocorrelati
 print(adf.test(test_ts)) # p-value < 0.05 indicates the TS is stationary
 
 #Estimate the coefficients Using Seasonal Arima model
-m1 <- auto.arima(logr, seasonal = TRUE)
+m1 <- auto.arima(test_ts, seasonal = TRUE)
 summary(m1)
 
 #studying the residues
